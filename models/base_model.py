@@ -4,19 +4,28 @@ import uuid
 from datetime import datetime
 
 
+format = "%Y-%m-%dT%H:%M:%s.%f"
 
 """BaseModel class for derivation of all other future classes"""
 class BaseModel:
     """ Initialization of BaseModel"""
-    def __init__(self):
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+    def __init__(self,*args,**kwargs):
+        if (kwargs):
+            for key,value in kwargs.items():
+                setatrr(self,key,value)
+            if hasattr(self,"created_at") and type(self.created_at) is string:
+                self.created_at = datetime.strptime(kwargs["created_at"],format)
+            if hasattr(self,"updated_at") and type(self.updated_at) is string:
+                self.updated_at = datetime.strptime(kwargs["updated_at"],format)
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
 
         
     """String representation of BaseModel"""
     def __str__(self):
-        print("[{:s}] ({:s}) {}",self.__class__.name,self.id,self.__dict__)
+        print("[{:s}] ({:s}) {}",self.__class__.__name__,self.id,self.__dict__)
 
         
     """updates updated_at attibute with current time"""
